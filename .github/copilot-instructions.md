@@ -1,17 +1,17 @@
-# Copilot instructions for PdfToMock
+# Copilot instructions for QuestionBankToMock
 
 ## Project commands
 
-Run commands from the `PdfToMock` project directory.
+Run commands from the `PdfToMock` workspace directory.
 
 - `npm start` — start the Angular development server at `http://localhost:4200/`.
-- `npm run build` — create the production build in `dist/PdfToMock`.
+- `npm run build` — create the production build in `dist/QuestionBankToMock`.
 - `npm run watch` — rebuild continuously with the development configuration.
 - `npm test -- --watch=false` — run the Vitest unit-test suite once.
 - `npx ng test --watch=false --include src/app/app.spec.ts` — run one test file.
 - `npx ng test --watch=false --filter "App"` — run tests whose suite or test name matches the regular expression.
 
-There is no lint script or lint builder configured in `package.json` or `angular.json`. Prettier is configured in `.prettierrc`; use it for formatting when changing code. The production build currently completes successfully but reports component-style budget warnings for the exam, results, and setup SCSS files. The existing `src/app/app.spec.ts` still contains the old “Hello, PdfToMock” title assertion, so the full suite currently has one failing stale test.
+There is no lint script or lint builder configured in `package.json` or `angular.json`. Prettier is configured in `.prettierrc`; use it for formatting when changing code. The production build currently completes successfully but reports component-style budget warnings for the exam, results, and setup SCSS files.
 
 ## Architecture
 

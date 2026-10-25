@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "PdfToMock": {
+    "QuestionBankToMock": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -62,10 +62,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "PdfToMock:build:production"
+              "buildTarget": "QuestionBankToMock:build:production"
             },
             "development": {
-              "buildTarget": "PdfToMock:build:development"
+              "buildTarget": "QuestionBankToMock:build:development"
             }
           },
           "defaultConfiguration": "development"
