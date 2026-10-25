@@ -1,0 +1,41 @@
+<section class="results-page" aria-labelledby="results-title">
+  <header class="results-heading"><span class="section-kicker">EXAM COMPLETE · {{ result().submittedAt | date: 'MMM d, y · h:mm a' }}</span><h1 id="results-title">That’s a wrap.</h1><p>Your answers are recorded. Questions with supplied answer keys are scored; the rest are marked unscored.</p></header>
+
+  <div class="score-layout">
+    <section class="score-card" aria-label="Exam score">
+      <div class="score-top"><span class="section-kicker">YOUR RESULT</span><span class="score-seal" aria-hidden="true">✳</span></div>
+      @if (percentage() === null) {
+        <div class="score-display"><strong>Submitted</strong></div>
+        <p class="unscored-note">No answer keys are available for this attempt.</p>
+      } @else {
+        <div class="score-display"><strong>{{ result().score }}</strong><span>/ {{ result().gradedQuestionCount }}</span></div>
+        <div class="score-bar" role="progressbar" [attr.aria-valuenow]="percentage()" aria-valuemin="0" aria-valuemax="100" aria-label="Score percentage"><span [style.width.%]="percentage()"></span></div>
+        <div class="score-foot"><strong>{{ percentage() }}%</strong><span>correct</span></div>
+      }
+    </section>
+
+    <section class="summary-card" aria-label="Exam summary">
+      <div class="summary-item"><span class="summary-icon correct-icon" aria-hidden="true">✓</span><span><small>Correct</small><strong>{{ result().score }} <em>of {{ result().gradedQuestionCount }} graded</em></strong></span></div>
+      <div class="summary-item"><span class="summary-icon missed-icon" aria-hidden="true">–</span><span><small>Unanswered</small><strong>{{ unansweredCount() }} <em>questions</em></strong></span></div>
+      <div class="summary-item"><span class="summary-icon time-icon" aria-hidden="true">◷</span><span><small>Time taken</small><strong>{{ timeTaken() }}</strong></span></div>
+      <button class="new-mock-button" type="button" (click)="createAnother.emit()">Build another mock <span aria-hidden="true">→</span></button>
+    </section>
+  </div>
+
+  <section class="review-section" aria-labelledby="review-title">
+    <div class="review-heading"><div><span class="section-kicker">THE REVIEW</span><h2 id="review-title">Question by question</h2></div><span class="review-count">{{ result().questions.length }} QUESTIONS</span></div>
+    <div class="review-list">
+      @for (question of result().questions; track $index) {
+        <article class="review-question" [class.review-correct]="question.correctAnswer >= 0 && result().answers[$index] === question.correctAnswer">
+          <div class="review-question-top"><span class="review-index">{{ ($index + 1).toString().padStart(2, '0') }}</span><span class="review-status" [class.correct-status]="question.correctAnswer >= 0 && result().answers[$index] === question.correctAnswer">{{ question.correctAnswer < 0 ? 'NOT SCORED' : result().answers[$index] === question.correctAnswer ? 'CORRECT' : 'REVISIT' }}</span></div>
+          <p class="review-question-text">{{ question.text }}</p>
+          <div class="answer-comparison">
+            <div class="your-answer"><small>Your answer</small><span [class.wrong-answer]="question.correctAnswer < 0 || result().answers[$index] !== question.correctAnswer">{{ result().answers[$index] === null ? 'Not answered' : question.options[result().answers[$index]!] }}</span></div>
+            @if (question.correctAnswer >= 0) { <div class="correct-answer"><small>Correct answer</small><span>{{ question.options[question.correctAnswer] }}</span></div> }
+          </div>
+          @if (question.explanation) { <p class="explanation">{{ question.explanation }}</p> }
+        </article>
+      }
+    </div>
+  </section>
+</section>

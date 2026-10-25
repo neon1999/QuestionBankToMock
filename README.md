@@ -4,13 +4,15 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 ## Development server
 
-To start a local development server, run:
+Paste question data as JSON in the setup screen, or choose **Use built-in question bank** to start with the hardcoded questions from `src/app/question-bank.ts`. The expected pasted shape is `{ "question_sets": [...] }`, using `QuestionBankSetDto` and `QuestionBankQuestionDto` declared at the top of that file. Each question should include options `A` through `E` (use an empty string for an unused option) and can include `answerDetails: { "answer": "A", "solution": "..." }` for scoring and result review. No file upload or external AI service is used.
+
+Question-bank entries follow `QuestionBankSetDto` and `QuestionBankQuestionDto`, declared at the top of `question-bank.ts`. Add `answerDetails: { answer: 'A', solution: '...' }` to a question to include it in scoring and the result review. Answer mappings are scoped by `set_id`, since question numbers repeat across sections.
 
 ```bash
-ng serve
+npm start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open `http://localhost:4200/`.
 
 ## Code scaffolding
 

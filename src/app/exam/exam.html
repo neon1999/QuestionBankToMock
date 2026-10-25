@@ -1,0 +1,42 @@
+<section class="exam-page" aria-labelledby="exam-title">
+  <header class="exam-top">
+    <div class="exam-title-group"><span class="section-kicker">MOCK EXAM IN PROGRESS</span><h1 id="exam-title">Stay with the question.</h1></div>
+    <div class="timer" [class.timer-low]="secondsRemaining() < 60" role="timer" aria-live="off"><span class="timer-dot"></span><span class="timer-label">TIME LEFT</span><strong>{{ formattedTime() }}</strong></div>
+  </header>
+
+  <div class="exam-layout">
+    <main class="question-panel">
+      <div class="question-meta"><span>QUESTION {{ (currentIndex() + 1).toString().padStart(2, '0') }} <span class="meta-divider">/</span> {{ questions().length.toString().padStart(2, '0') }}</span><span class="answered-label">{{ answeredCount() }} ANSWERED</span></div>
+      <div class="progress-track" role="progressbar" [attr.aria-valuenow]="currentIndex() + 1" [attr.aria-valuemax]="questions().length" aria-label="Exam progress"><span [style.width.%]="((currentIndex() + 1) / questions().length) * 100"></span></div>
+
+      <article class="question-content">
+        @if (currentQuestion().context) {
+          <p class="question-context">{{ currentQuestion().context }}</p>
+        }
+        <p class="question-text">{{ currentQuestion().text }}</p>
+        <fieldset class="answer-list">
+          <legend>Choose one answer</legend>
+          @for (option of currentQuestion().options; track $index) {
+            <button class="answer-option" type="button" [class.selected]="answers()[currentIndex()] === $index" [attr.aria-pressed]="answers()[currentIndex()] === $index" (click)="selectAnswer($index)">
+              <span class="option-letter">{{ ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'][$index] || $index + 1 }}</span><span class="option-text">{{ option }}</span><span class="selection-mark" aria-hidden="true"></span>
+            </button>
+          }
+        </fieldset>
+      </article>
+
+      <footer class="question-footer"><button class="text-button" type="button" [disabled]="currentIndex() === 0" (click)="goToQuestion(currentIndex() - 1)"><span aria-hidden="true">←</span> Previous</button><div class="next-actions">@if (currentIndex() < questions().length - 1) { <button class="next-button" type="button" (click)="goToQuestion(currentIndex() + 1)">Next question <span aria-hidden="true">→</span></button> } @else { <button class="submit-button" type="button" (click)="submitExam()">Submit exam <span aria-hidden="true">✓</span></button> }</div></footer>
+    </main>
+
+    <aside class="question-nav" aria-label="Question navigator">
+      <div class="nav-heading"><span class="section-kicker">YOUR EXAM</span><strong>{{ questions().length }} questions</strong></div>
+      <div class="question-grid">
+        @for (question of questions(); track $index) {
+          <button class="question-number" type="button" [class.active]="currentIndex() === $index" [class.answered]="answers()[$index] !== null" [attr.aria-label]="'Go to question ' + ($index + 1) + (answers()[$index] !== null ? ', answered' : ', unanswered')" [attr.aria-current]="currentIndex() === $index ? 'step' : null" (click)="goToQuestion($index)">{{ $index + 1 }}</button>
+        }
+      </div>
+      <div class="nav-legend"><span><i class="legend-dot answered-dot"></i>Answered</span><span><i class="legend-dot"></i>Unanswered</span></div>
+      <div class="nav-tip"><span class="tip-mark" aria-hidden="true">✳</span><p>Your answers are saved as you go. You can move between questions at any time.</p></div>
+      <button class="end-button" type="button" (click)="submitExam()">Finish and submit <span aria-hidden="true">→</span></button>
+    </aside>
+  </div>
+</section>

@@ -1,0 +1,101 @@
+<section class="setup-page">
+  <div class="intro">
+    <div class="eyebrow"><span class="eyebrow-line"></span> YOUR STUDY DESK</div>
+    <h1>Turn your notes into<br /><span>a little pressure.</span></h1>
+    <p class="intro-copy">Paste your questions and answers in the required format, then build a timed mock in seconds.</p>
+    <div class="step-track" aria-label="Exam setup steps">
+      <span class="step active"><b>01</b> Build your mock</span>
+      <span class="step-line"></span>
+      <span class="step"><b>02</b> Take the exam</span>
+      <span class="step-line"></span>
+      <span class="step"><b>03</b> See your score</span>
+    </div>
+  </div>
+
+  <div class="workspace">
+    <section class="setup-card" aria-labelledby="setup-title">
+      <div class="card-heading">
+        <div>
+          <span class="section-kicker">01 / SOURCE MATERIAL</span>
+          <h2 id="setup-title">Paste your questions</h2>
+        </div>
+        <span class="pdf-stamp" aria-hidden="true">{{ '{ }' }}</span>
+      </div>
+
+      <div class="ai-prompt-card">
+        <div class="ai-prompt-heading">
+          <div>
+            <label for="ai-prompt">Step 1: Get your questions ready</label>
+            <p>Copy this prompt, paste it into any AI tool, then attach your question document.</p>
+          </div>
+          <button class="copy-prompt-button" type="button" (click)="copyAiPrompt()">
+            @if (promptCopied()) { Copied } @else { Copy prompt }
+          </button>
+        </div>
+        <textarea id="ai-prompt" class="ai-prompt" readonly [value]="aiPrompt"></textarea>
+      </div>
+
+      <div class="paste-heading">
+        <label class="paste-label" for="question-input">Step 2: Paste the AI's JSON response here</label>
+        <p>Paste the complete response exactly as the AI returned it.</p>
+      </div>
+      <textarea id="question-input" class="question-input" [ngModel]="pastedQuestions()" (ngModelChange)="pastedQuestions.set($event)" placeholder='{"question_sets":[{"set_id":"Set 1","category":"General","directions":"","has_diagram":false,"diagram_type":null,"extracted_diagram_data":{"headers":[],"rows":[]},"notes":[],"questions":[{"question_number":"Q.1","question_text":"What is 2 + 2?","options":{"A":"3","B":"4","C":"5","D":"6","E":""},"answerDetails":{"answer":"B","solution":"2 + 2 equals 4."}}]}]}'></textarea>
+      <p class="format-note">Paste JSON with question text, options A–E, and <code>answerDetails.answer</code> for scoring.</p>
+
+      <div class="api-field">
+        <label>Question source</label>
+        <div class="mock-source">Pasted question bank</div>
+        <p>Your pasted content is parsed in this browser. No file upload or external AI service is used.</p>
+      </div>
+
+      @if (errorMessage()) {
+        <p class="error-message" role="alert">{{ errorMessage() }}</p>
+      }
+
+      <button class="extract-button" type="button" [disabled]="!pastedQuestions().trim()" (click)="loadQuestions()">
+        Load questions <span aria-hidden="true">→</span>
+      </button>
+      <button class="sample-button" type="button" (click)="loadHardcodedQuestions()">
+        Use built-in question bank <span aria-hidden="true">↗</span>
+      </button>
+      <p class="privacy-note"><span aria-hidden="true">✳</span> No external AI service is called.</p>
+    </section>
+
+    <aside class="settings-card" aria-labelledby="settings-title">
+      <div class="settings-topline"><span class="section-kicker">02 / EXAM SETTINGS</span><span class="settings-number">✳</span></div>
+      <h2 id="settings-title">All the best</h2>
+      <p class="settings-intro">Set the pace. You can change these before the clock starts.</p>
+
+      <div class="setting-row">
+        <div class="setting-label"><span class="setting-icon question-icon" aria-hidden="true">?</span><label for="question-count">Questions</label></div>
+        <div class="number-control"><input id="question-count" type="number" min="1" step="1" inputmode="numeric" [max]="questions().length || 100" [disabled]="questions().length === 0" [ngModel]="questionCount()" (keydown)="preventNonIntegerInput($event)" (ngModelChange)="updateQuestionCount($event)" /><span>Q</span></div>
+      </div>
+      <div class="setting-hint">@if (questions().length) { {{ questions().length }} questions loaded } @else { Set after your questions are loaded }</div>
+
+      <div class="setting-row duration-row">
+        <div class="setting-label"><span class="setting-icon clock-icon" aria-hidden="true">◷</span><label for="duration">Time limit</label></div>
+        <div class="number-control"><input id="duration" type="number" min="1" step="1" inputmode="numeric" max="240" [ngModel]="durationMinutes()" (keydown)="preventNonIntegerInput($event)" (ngModelChange)="updateDurationMinutes($event)" /><span>MIN</span></div>
+      </div>
+      <div class="setting-hint">The exam submits automatically when time runs out</div>
+
+      @if (questions().length > 0) {
+        <div class="extracted-summary" role="status"><span class="success-mark">✓</span><span><strong>{{ questions().length }} questions ready</strong><small>{{ questionSource() }}</small></span></div>
+        <button class="start-button" type="button" (click)="startMock()">Start mock exam <span aria-hidden="true">→</span></button>
+      } @else {
+        <div class="settings-empty"><span class="empty-rule"></span> Your exam settings will be ready after loading</div>
+      }
+    </aside>
+  </div>
+
+  @if (questions().length > 0) {
+    <section class="preview-section" aria-labelledby="preview-title">
+      <div class="preview-heading"><div><span class="section-kicker">QUESTION PREVIEW</span><h2 id="preview-title">A first look at your questions</h2></div><span class="preview-count">{{ questions().length }} TOTAL</span></div>
+      <div class="preview-list">
+        @for (question of questions().slice(0, 3); track $index) {
+          <article class="preview-question"><span class="preview-index">{{ ($index + 1).toString().padStart(2, '0') }}</span><p>{{ question.text }}</p><span class="option-count">{{ question.options.length }} choices</span></article>
+        }
+        @if (questions().length > 3) { <div class="more-questions">+ {{ questions().length - 3 }} more questions ready for your mock</div> }
+      </div>
+    </section>
+  }
+</section>
